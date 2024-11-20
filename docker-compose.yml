@@ -1,49 +1,20 @@
 services:
-  db:
-    container_name: notifications_service_db
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: password123
-      MYSQL_DATABASE: task_management_development
-    volumes:
-      - db_data:/var/lib/mysql
-    ports:
-      - "3309:3306"
-    networks:
-      - app-network
-
   app:
     container_name: notifications_service
     stdin_open: true
     platform: linux/x86_64
     tty: true
     build: .
-    command: bash entrypoint.sh
+    command: sh entrypoint.sh
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle
     ports:
       - "${PORT:-3300}:3000"
-    depends_on:
-      - db
-      - rabbitmq
-    # environment:
-    #   RABBITMQ_HOST: rabbitmq
-    #   RABBITMQ_PORT: 5672
-    #   RABBITMQ_QUEUE: notifications
     networks:
       - app-network
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+    env_file:
+      - .env
 
 networks:
   app-network:
@@ -51,6 +22,4 @@ networks:
     external: true
 
 volumes:
-  db_data:
   bundle_cache:
-  rabbitmq_data:
