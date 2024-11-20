@@ -4,7 +4,15 @@ module Api
   module V1
     class NotificationsController < ApplicationController
       def create
-        notification = Notification.new(notification_params)
+        notification = Notification.find_or_initialize_by(
+          task_id: notification_params[:task_id],
+          user_id: notification_params[:user_id]
+        )
+
+        notification.assign_attributes(
+          status: notification_params[:status],
+          details: JSON.parse(notification_params[:details].to_json)
+        )
 
         if notification.save
           render json: { message: "Notification received successfully", id: notification.id }, status: :created
@@ -16,7 +24,7 @@ module Api
       private
 
       def notification_params
-        params.require(:notification).permit(:task_id, :user_id, :title, :details, :status)
+        params.require(:notification).permit(:task_id, :user_id, :title, :status, details: [:label, :value])
       end
     end
   end
