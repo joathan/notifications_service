@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_20_032915) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_20_225223) do
   create_table "notifications", charset: "utf8mb3", force: :cascade do |t|
     t.integer "task_id"
     t.integer "user_id"
     t.string "title"
-    t.text "details"
+    t.json "details"
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
