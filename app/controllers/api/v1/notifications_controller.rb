@@ -10,11 +10,14 @@ module Api
         )
 
         notification.assign_attributes(
+          title: notification_params[:title],
           status: notification_params[:status],
           details: JSON.parse(notification_params[:details].to_json)
         )
 
         if notification.save
+          NotificationBroadcastService.broadcast_to_user(notification.user_id, notification) if notification.status == 'completed'
+
           render json: { message: "Notification received successfully", id: notification.id }, status: :created
         else
           render json: { errors: notification.errors.full_messages }, status: :unprocessable_entity
